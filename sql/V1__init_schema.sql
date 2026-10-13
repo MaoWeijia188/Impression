@@ -65,7 +65,7 @@ CREATE TABLE question (
   title            VARCHAR(200)    NOT NULL                COMMENT '题干',
   description      VARCHAR(200)    NOT NULL DEFAULT ''     COMMENT '题干补充说明',
   required         TINYINT         NOT NULL DEFAULT 0      COMMENT '是否必答：1=必答 0=可跳过。v2.0 起全部可跳过，本字段恒为 0，仅供将来恢复差异化设置',
-  max_choices      TINYINT         NOT NULL DEFAULT 0      COMMENT '最多可选数：0=不限（注意：与 V1 旧语义不同，旧默认值是 1）',
+  max_choices      TINYINT         NOT NULL DEFAULT 0      COMMENT '最多可选数：0=不限（注意：早期设计稿默认值是 1，沿用会让多选静默失效）',
   max_length       SMALLINT        NOT NULL DEFAULT 200    COMMENT '自定义答案字数上限；0=不允许自定义',
   sort_order       SMALLINT        NOT NULL DEFAULT 0      COMMENT '展示顺序，从 1 开始',
   created_at       DATETIME(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
