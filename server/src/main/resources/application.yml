@@ -1,0 +1,41 @@
+# ============================================================
+# Impression 后端配置
+#
+# 数据库密码：推荐用环境变量 DB_PASSWORD 传入（不写进代码库）。
+#   本地想直接写死也可以，但请改到 application-local.yml（根 .gitignore 已排除该文件）。
+# ============================================================
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+spring:
+  application:
+    name: impression
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/impression?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: ${DB_PASSWORD:}
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+
+mybatis-plus:
+  configuration:
+    # 数据库下划线字段 -> Java 驼峰属性
+    map-underscore-to-camel-case: true
+    # 开发期打印真实 SQL，方便观察 MyBatis-Plus 生成了什么语句（上线前要去掉）
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+
+logging:
+  level:
+    com.maoweijia.impression: debug
