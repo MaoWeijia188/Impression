@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#6C5CE7" />
+<title>印象问答 · 你眼中的我是什么样的人</title>
+<style>
+  /* ===================== 设计变量（主题） ===================== */
+  :root {
+    --c-primary: #6C5CE7;
+    --c-primary-deep: #5849CE;
+    --c-primary-soft: #EFECFE;
+    --c-accent: #FF7A9C;
+    --c-text: #1B1B27;
+    --c-text-2: #66667A;
+    --c-text-3: #9C9CAE;
+    --c-bg: #F4F3FB;
+    --c-card: #FFFFFF;
+    --c-border: #E7E6F2;
+    --c-danger: #F2545B;
+    --c-warn: #F5A623;
+    --radius: 20px;
+    --radius-sm: 14px;
+    --shadow-card: 0 2px 8px rgba(28, 28, 40, .04), 0 12px 32px rgba(76, 62, 180, .06);
+    --space: 16px;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body { margin: 0; padding: 0; min-height: 100%; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+                 "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+    color: var(--c-text);
+    font-size: 16px;
+    line-height: 1.6;
+    background: var(--c-bg);
+    background-image:
+      radial-gradient(680px 420px at 12% -8%, rgba(108, 92, 231, .16), transparent 60%),
+      radial-gradient(560px 380px at 100% 4%, rgba(255, 122, 156, .14), transparent 62%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===================== 应用容器 ===================== */
+  .app {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+    position: relative;
+  }
+
+  .screen { display: none; flex-direction: column; flex: 1; animation: screen-in .32s cubic-bezier(.22, .8, .3, 1); }
+  .screen.is-active { display: flex; }
+
+  @keyframes screen-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===================== 按钮 ===================== */
+  .btn {
+    border: none;
+    font: inherit;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    min-height: 52px;
+    padding: 0 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform .12s ease, box-shadow .18s ease, background .18s ease, opacity .18s ease;
+    width: 100%;
+  }
+  .btn:active { transform: scale(.985); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #7C6BF0 0%, var(--c-primary) 55%, #5A48D8 100%);
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(108, 92, 231, .32);
+    font-size: 17px;
+  }
+  .btn-primary:disabled { opacity: .42; box-shadow: none; cursor: not-allowed; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--c-text-2);
+    border: 1.5px solid var(--c-border);
+    flex: 0 0 34%;
+    font-size: 16px;
+  }
+  .btn-ghost:disabled { opacity: .38; cursor: not-allowed; }
+
+  .btn-text {
+    background: transparent;
+    color: var(--c-text-3);
+    box-shadow: none;
+    font-size: 15px;
+    font-weight: 500;
+    min-height: 44px;
+  }
+
+  /* ===================== 引导页 ===================== */
+  #screen-intro { justify-content: center; gap: 22px; }
+
+  .avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8E7CF5, #6C5CE7 60%, #4F3FC7);
+    color: #fff;
+    font-size: 26px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 26px rgba(108, 92, 231, .34);
+    margin-bottom: 6px;
+  }
+
+  .eyebrow {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    color: var(--c-primary);
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+
+  .intro-title {
+    font-size: 27px;
+    line-height: 1.4;
+    font-weight: 800;
+    letter-spacing: -.01em;
+    margin: 0 0 14px;
+  }
+  .intro-title .name { color: var(--c-primary); }
+
+  .intro-sub { color: var(--c-text-2); font-size: 15px; margin: 0; }
+
+  .intro-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius);
+    padding: 16px 8px;
+    box-shadow: var(--shadow-card);
+  }
+  .meta-item { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1; }
+  .meta-num { font-size: 19px; font-weight: 800; color: var(--c-text); }
+  .meta-label { font-size: 12px; color: var(--c-text-3); }
+  .meta-divider { width: 1px; height: 26px; background: var(--c-border); }
+
+  /* 玩法说明（自由答题规则） */
+  .rules {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow-card);
+  }
+  .rule-item { display: flex; gap: 11px; align-items: flex-start; font-size: 14px; color: var(--c-text-2); }
+  .rule-icon {
+    flex: 0 0 auto;
+    width: 22px; height: 22px;
+    border-radius: 7px;
+    background: var(--c-primary-soft);
+    color: var(--c-primary);
+    font-size: 12px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .rule-item b { color: var(--c-text); font-weight: 700; }
+
+  .privacy-note {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--c-text-2);
+    background: rgba(255, 255, 255, .72);
+    border: 1px dashed var(--c-border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+  .privacy-note svg { flex: 0 0 auto; margin-top: 2px; color: var(--c-primary); }
+
+  /* ===================== 答题页 ===================== */
+  .quiz-head { padding-bottom: 18px; }
+
+  .progress-track {
+    height: 6px;
+    border-radius: 99px;
+    background: #E4E2F3;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #8E7CF5, var(--c-primary));
+    transition: width .34s cubic-bezier(.4, 0, .2, 1);
+  }
+  .quiz-head-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+  .progress-text { font-size: 13px; font-weight: 600; color: var(--c-text-2); font-variant-numeric: tabular-nums; }
+  .dim-tag {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--c-primary);
+    background: var(--c-primary-soft);
+    border-radius: 99px;
+    padding: 4px 11px;
+  }
+
+  .quiz-body { flex: 1; display: flex; flex-direction: column; }
+
+  .q-title {
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 6px 0 6px;
+    letter-spacing: -.01em;
+  }
+  .q-hint { font-size: 13px; color: var(--c-text-3); margin: 0 0 18px; }
+
+  /* 选项（全部为多选） */
+  .options { display: flex; flex-direction: column; gap: 11px; }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    font-size: 16px;
+    color: var(--c-text);
+    background: var(--c-card);
+    border: 1.5px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    padding: 15px 16px;
+    min-height: 56px;
+    cursor: pointer;
+    transition: border-color .16s ease, background .16s ease, transform .12s ease;
+  }
+  .option:active { transform: scale(.99); }
+
+  .option-mark {
+    flex: 0 0 auto;
+    width: 22px; height: 22px;
+    border: 2px solid #D3D1E6;
+    border-radius: 7px;
+    position: relative;
+    transition: border-color .16s ease, background .16s ease;
+  }
+  .option-mark::after {
+    content: "✓";
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    opacity: 0;
+    transform: scale(.5);
+    transition: opacity .16s ease, transform .2s cubic-bezier(.3, 1.4, .5, 1);
+  }
+
+  .option.is-selected { border-color: var(--c-primary); background: var(--c-primary-soft); }
+  .option.is-selected .option-mark { border-color: var(--c-primary); background: var(--c-primary); }
+  .option.is-selected .option-mark::after { opacity: 1; transform: scale(1); }
+  .option.is-disabled { opacity: .42; cursor: not-allowed; }
+  .option-text { flex: 1; line-height: 1.45; }
+
+  /* 自定义答案 */
+  .custom-block { margin-top: 12px; }
+
+  .custom-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    min-height: 50px;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--c-primary);
+    background: rgba(255, 255, 255, .7);
+    border: 1.5px dashed #C9C5EE;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background .16s ease, border-color .16s ease;
+  }
+  .custom-toggle:active { background: var(--c-primary-soft); }
+  .custom-toggle .plus { font-size: 17px; line-height: 1; font-weight: 700; }
+  .custom-block.is-open .custom-toggle { border-style: solid; border-color: var(--c-primary); background: var(--c-primary-soft); }
+
+  .custom-panel { display: none; margin-top: 11px; }
+  .custom-block.is-open .custom-panel { display: block; }
+
+  .q-textarea {
+    width: 100%;
+    min-height: 112px;
+    resize: none;
+    font: inherit;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--c-text);
+    background: var(--c-card);
+    border: 1.5px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color .16s ease, box-shadow .16s ease;
+  }
+  .q-textarea::placeholder { color: #B7B6C6; }
+  .q-textarea:focus { border-color: var(--c-primary); box-shadow: 0 0 0 4px rgba(108, 92, 231, .1); }
+
+  .q-foot-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 8px;
+    min-height: 22px;
+  }
+  .q-counter { font-size: 12.5px; color: var(--c-text-3); font-variant-numeric: tabular-nums; }
+  .q-counter.is-warn { color: var(--c-danger); }
+
+  /* 跳过 */
+  .skip-row { margin-top: auto; padding-top: 22px; text-align: center; }
+  .skip-link {
+    background: none; border: none; padding: 8px 10px;
+    font: inherit; font-size: 14px; color: var(--c-text-3);
+    cursor: pointer;
+    text-decoration: underline; text-underline-offset: 4px;
+    min-height: 44px;
+  }
+  .skip-link:active { color: var(--c-text-2); }
+
+  /* 底部操作 */
+  .quiz-foot {
+    display: flex;
+    gap: 11px;
+    padding-top: 16px;
+  }
+  .quiz-foot .btn-primary { flex: 1; }
+
+  /* ===================== 提交成功页 ===================== */
+  #screen-done { justify-content: center; gap: 22px; text-align: center; }
+
+  .done-icon {
+    width: 78px; height: 78px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8E7CF5, var(--c-primary) 60%, #4F3FC7);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 12px 30px rgba(108, 92, 231, .34);
+    animation: pop .42s cubic-bezier(.3, 1.5, .5, 1);
+  }
+  @keyframes pop { from { transform: scale(.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .done-title { font-size: 24px; font-weight: 800; margin: 0; letter-spacing: -.01em; }
+  .done-sub { color: var(--c-text-2); font-size: 15px; margin: 0; }
+
+  .answered-tip {
+    font-size: 13px;
+    color: var(--c-text-3);
+    background: rgba(255, 255, 255, .7);
+    border: 1px solid var(--c-border);
+    border-radius: 99px;
+    padding: 7px 14px;
+    display: inline-block;
+  }
+
+  .promo-card {
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .promo-title { font-size: 16.5px; font-weight: 700; margin: 0; }
+  .promo-sub { font-size: 13.5px; color: var(--c-text-3); margin: 0 0 12px; }
+
+  /* ===================== Toast ===================== */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: calc(34px + env(safe-area-inset-bottom, 0px));
+    transform: translate(-50%, 16px);
+    background: rgba(27, 27, 39, .92);
+    color: #fff;
+    font-size: 14px;
+    padding: 11px 18px;
+    border-radius: 99px;
+    max-width: 86vw;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .22s ease, transform .22s ease;
+    z-index: 50;
+  }
+  .toast.is-show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ===================== 原型水印 ===================== */
+  .proto-badge {
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--c-text-3);
+    padding-top: 18px;
+    letter-spacing: .02em;
+  }
+
+  @media (min-width: 768px) {
+    .app { padding-top: 56px; }
+    .intro-title { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ 页面 1：引导 ============ -->
+  <section class="screen is-active" id="screen-intro">
+    <div>
+      <div class="avatar" id="avatar">印</div>
+      <p class="eyebrow">印象问答</p>
+      <h1 class="intro-title"><span class="name" id="intro-name">朋友</span> 想知道，<br>你眼中的我是什么样的人？</h1>
+      <p class="intro-sub">一共 <b id="intro-count">11</b> 道题，大约 <span id="intro-time">2–3 分钟</span>，不用登录。</p>
+    </div>
+
+    <div class="intro-meta">
+      <div class="meta-item"><span class="meta-num" id="meta-count">11</span><span class="meta-label">道题</span></div>
+      <div class="meta-divider"></div>
+      <div class="meta-item"><span class="meta-num" id="meta-time">2–3</span><span class="meta-label">分钟</span></div>
+      <div class="meta-divider"></div>
+      <div class="meta-item"><span class="meta-num">匿名</span><span class="meta-label">不记录身份</span></div>
+    </div>
+
+    <div class="rules">
+      <div class="rule-item"><span class="rule-icon">1</span><span><b>每道题都可以多选</b>，不受数量限制</span></div>
+      <div class="rule-item"><span class="rule-icon">2</span><span><b>选项都不合适？自己写</b>，任何一题都能补充</span></div>
+      <div class="rule-item"><span class="rule-icon">3</span><span><b>任何一题都能跳过</b>，包括全部跳过</span></div>
+    </div>
+
+    <div class="privacy-note">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      <span>你的回答会展示给创建者，但我们不会记录你的身份信息。</span>
+    </div>
+
+    <button class="btn btn-primary" id="btn-start">开始回答</button>
+  </section>
+
+  <!-- ============ 页面 2：答题 ============ -->
+  <section class="screen" id="screen-quiz">
+    <header class="quiz-head">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="quiz-head-row">
+        <span class="progress-text" id="progress-text">第 1 / 11 题</span>
+        <span class="dim-tag" id="dim-tag">第一印象</span>
+      </div>
+    </header>
+
+    <div class="quiz-body" id="quiz-body"></div>
+
+    <footer class="quiz-foot">
+      <button class="btn btn-ghost" id="btn-prev">上一题</button>
+      <button class="btn btn-primary" id="btn-next">下一题</button>
+    </footer>
+  </section>
+
+  <!-- ============ 页面 3：提交成功 ============ -->
+  <section class="screen" id="screen-done">
+    <div>
+      <div class="done-icon">
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+    </div>
+    <div>
+      <h2 class="done-title">已收到你的回答，谢谢！</h2>
+      <p class="done-sub"><span id="done-name">朋友</span> 已经收到了你的回答，样本攒够后会看到大家的印象。</p>
+      <p class="answered-tip" id="answered-tip">你这次回答了 0 / 11 题</p>
+    </div>
+
+    <div class="promo-card">
+      <p class="promo-title">也想知道朋友眼中的自己？</p>
+      <p class="promo-sub">创建属于你的印象问卷，发给朋友</p>
+      <button class="btn btn-primary" id="btn-create">创建我的印象问卷</button>
+    </div>
+
+    <button class="btn btn-text" id="btn-restart">重新填写一份</button>
+  </section>
+
+  <div class="proto-badge">第一版原型 · 仅演示交互，数据不会真正提交</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+ * 1. 配置区
+ * ===================================================================== */
+
+const CONFIG = {
+  creatorName: "毛维嘉",        // 显示在引导页和成功页
+  minRequiredAnswers: 1,       // 提交下限：至少回答几道题（设 0 = 完全放开，允许全跳过）
+  // avatar: 不填则自动取 creatorName 首字
+};
+
+/* ---------------------------------------------------------------------
+ * 题型已统一：每道题都是「多选 + 可自定义 + 可跳过」，不再区分单选/多选/开放。
+ *
+ *   options       预设选项；留空数组 [] 即为一道纯自由填写题
+ *   maxSelect     最多可选几项；0 = 不限
+ *   maxLength     自定义答案的字数上限
+ *
+ * 答案结构：{ keys: ["A","C"], custom: "自己写的内容" }
+ * 想加/减题：直接增删数组元素即可，顺序 = 出题顺序。
+ * ------------------------------------------------------------------- */
+const QUESTIONS = [
+  /* ---------- 维度一：第一印象 ---------- */
+  {
+    id: "q1", dimension: "第一印象",
+    title: "第一次接触我时，我在你眼里有哪些标签？",
+    options: [
+      { key: "A", text: "靠谱" }, { key: "B", text: "高冷" }, { key: "C", text: "话少" },
+      { key: "D", text: "幽默" }, { key: "E", text: "认真" }, { key: "F", text: "面善" },
+      { key: "G", text: "有点神秘" }, { key: "H", text: "平易近人" }, { key: "I", text: "不太有印象" }
+    ],
+    maxSelect: 0,
+    customPlaceholder: "上面都不太准？用自己的话描述一下第一印象…"
+  },
+  {
+    id: "q2", dimension: "第一印象",
+    title: "第一次接触我时，你对我最深的印象是什么？",
+    options: [],
+    maxSelect: 0,
+    customPlaceholder: "想到什么就写什么，不必写得很正式…"
+  },
+
+  /* ---------- 维度二：相处体验 ---------- */
+  {
+    id: "q3", dimension: "相处体验",
+    title: "相处中，我的哪些表现让你觉得舒服？",
+    options: [
+      { key: "A", text: "会记得你说过的小事" },
+      { key: "B", text: "不太打断你说话" },
+      { key: "C", text: "有事能帮就帮" },
+      { key: "D", text: "不会把话说得太绝" },
+      { key: "E", text: "情绪比较稳定" },
+      { key: "F", text: "说不出来" }
+    ],
+    maxSelect: 0,
+    customPlaceholder: "还有别的让你觉得舒服的地方？写在这里…"
+  },
+  {
+    id: "q4", dimension: "相处体验",
+    title: "和我相处下来，你最真实的感受是什么？有没有哪个瞬间让你印象特别深？",
+    options: [],
+    maxSelect: 0,
+    customPlaceholder: "比如某个你记得住的场景…"
+  },
+
+  /* ---------- 维度三：性格特征 ---------- */
+  {
+    id: "q5", dimension: "性格特征",
+    title: "你觉得我最突出的优点是？",
+    options: [
+      { key: "A", text: "真诚、不装" },
+      { key: "B", text: "靠谱、说到做到" },
+      { key: "C", text: "聪明、学东西快" },
+      { key: "D", text: "幽默、会活跃气氛" },
+      { key: "E", text: "细心、会照顾人情绪" },
+      { key: "F", text: "有主见、能扛事" }
+    ],
+    maxSelect: 0,
+    customPlaceholder: "有上面没提到的优点？自己写…"
+  },
+  {
+    id: "q6", dimension: "性格特征",
+    title: "如果一定要说一个我最需要改的地方，你会选？",
+    options: [
+      { key: "A", text: "太在意别人的看法" },
+      { key: "B", text: "有点拖延、三分钟热度" },
+      { key: "C", text: "想太多、容易内耗" },
+      { key: "D", text: "表达不够直接" },
+      { key: "E", text: "太爱较真" },
+      { key: "F", text: "没什么要改的" }
+    ],
+    maxSelect: 0,
+    customPlaceholder: "也可以自己写一条…"
+  },
+  {
+    id: "q7", dimension: "性格特征",
+    title: "如果用几个词形容我的性格，你会选哪些？为什么？",
+    options: [],
+    maxSelect: 0,
+    customPlaceholder: "几个词 + 一句理由就可以…"
+  },
+
+  /* ---------- 维度四：关系认知 ---------- */
+  {
+    id: "q8", dimension: "关系认知",
+    title: "在你心里，我们现在更像哪一种关系？",
+    options: [
+      { key: "A", text: "普通同学 / 同事" },
+      { key: "B", text: "关系不错的朋友" },
+      { key: "C", text: "可以聊心事的朋友" },
+      { key: "D", text: "认识，但不算熟" }
+    ],
+    maxSelect: 0,
+    customPlaceholder: "都不太像？用自己的话形容…"
+  },
+  {
+    id: "q9", dimension: "关系认知",
+    title: "用一种相处场景形容我们，你觉得最接近？",
+    options: [
+      { key: "A", text: "不常联系，但见面不尴尬" },
+      { key: "B", text: "有事能互相帮一把" },
+      { key: "C", text: "能一起玩、一起放松" },
+      { key: "D", text: "能在学习 / 工作上互相推动" },
+      { key: "E", text: "无话不谈的那种" }
+    ],
+    maxSelect: 0,
+    customPlaceholder: "或者自己描述一个场景…"
+  },
+  {
+    id: "q10", dimension: "关系认知",
+    title: "你觉得我们之间的关系走向更像？",
+    options: [
+      { key: "A", text: "会一直保持联系的长期朋友" },
+      { key: "B", text: "阶段性的朋友，各自阶段结束后慢慢变淡" },
+      { key: "C", text: "现在这样挺好，不去想那么远" },
+      { key: "D", text: "说不清" }
+    ],
+    maxSelect: 0,
+    customPlaceholder: "也可以说说你的判断…"
+  },
+  {
+    id: "q11", dimension: "关系认知",
+    title: "如果让你用一句话形容我们的关系，你会说什么？",
+    options: [],
+    maxSelect: 0,
+    customPlaceholder: "一句话就可以…"
+  }
+];
+
+const DEFAULT_MAX_LENGTH = 200;   // 每题自定义答案的默认字数上限
+
+/* =====================================================================
+ * 2. 状态
+ * ===================================================================== */
+
+const DRAFT_KEY = "impression.draft.prototype.v3";
+
+const state = {
+  index: 0,
+  // answers[qid] = { keys: [...], custom: "..." }
+  answers: {},
+  submitted: false
+};
+
+/* =====================================================================
+ * 3. DOM
+ * ===================================================================== */
+
+const $ = (id) => document.getElementById(id);
+const screens = {
+  intro: $("screen-intro"),
+  quiz: $("screen-quiz"),
+  done: $("screen-done")
+};
+const quizBody = $("quiz-body");
+const btnPrev = $("btn-prev");
+const btnNext = $("btn-next");
+const toastEl = $("toast");
+
+/* =====================================================================
+ * 4. 通用工具
+ * ===================================================================== */
+
+function showScreen(name) {
+  Object.values(screens).forEach((s) => s.classList.remove("is-active"));
+  screens[name].classList.add("is-active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+let toastTimer = null;
+function toast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add("is-show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove("is-show"), 1900);
+}
+
+function saveDraft() {
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ index: state.index, answers: state.answers }));
+  } catch (e) { /* 隐私模式等场景忽略 */ }
+}
+
+function loadDraft() {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return null;
+    const d = JSON.parse(raw);
+    if (d && typeof d === "object") return d;
+  } catch (e) { /* ignore */ }
+  return null;
+}
+
+function clearDraft() {
+  try { localStorage.removeItem(DRAFT_KEY); } catch (e) { /* ignore */ }
+}
+
+/* 取某题的答案对象（保证结构存在） */
+function getAnswer(qid) {
+  if (!state.answers[qid]) state.answers[qid] = { keys: [], custom: "" };
+  return state.answers[qid];
+}
+
+/* 该题是否被作答过（选了选项 或 写了内容） */
+function isAnswered(q) {
+  const a = state.answers[q.id];
+  if (!a) return false;
+  return (Array.isArray(a.keys) && a.keys.length > 0) || (typeof a.custom === "string" && a.custom.trim().length > 0);
+}
+
+/* 已作答题目数 */
+function answeredCount() {
+  return QUESTIONS.filter(isAnswered).length;
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+/* =====================================================================
+ * 5. 渲染
+ * ===================================================================== */
+
+function renderQuestion() {
+  const q = QUESTIONS[state.index];
+  const total = QUESTIONS.length;
+  const maxLen = q.maxLength || DEFAULT_MAX_LENGTH;
+  const answer = getAnswer(q.id);
+  const hasOptions = q.options && q.options.length > 0;
+
+  // 头部
+  $("progress-fill").style.width = ((state.index + 1) / total * 100) + "%";
+  $("progress-text").textContent = `第 ${state.index + 1} / ${total} 题`;
+  $("dim-tag").textContent = q.dimension;
+
+  // 提示文案
+  let hint;
+  if (hasOptions) {
+    hint = "可多选" + (q.maxSelect > 0 ? `（最多 ${q.maxSelect} 项）` : "") + " · 可自己写 · 可跳过";
+  } else {
+    hint = "自由填写 · 可跳过";
+  }
+
+  let html = `
+    <h2 class="q-title">${escapeHtml(q.title)}</h2>
+    <p class="q-hint">${hint}</p>
+  `;
+
+  // 选项
+  if (hasOptions) {
+    html += `<div class="options" id="options">`;
+    q.options.forEach((opt) => {
+      html += `
+        <button class="option" type="button" data-key="${opt.key}">
+          <span class="option-mark"></span>
+          <span class="option-text">${escapeHtml(opt.text)}</span>
+        </button>`;
+    });
+    html += `</div>`;
+  }
+
+  // 自定义答案区（纯自由题默认展开，有选项的题默认收起）
+  const isOpen = !hasOptions || (answer.custom && answer.custom.length > 0);
+  html += `
+    <div class="custom-block ${isOpen ? "is-open" : ""}" id="custom-block">
+      ${hasOptions ? `
+        <button class="custom-toggle" type="button" id="custom-toggle">
+          <span class="plus">＋</span><span id="custom-toggle-text">自己写一个答案</span>
+        </button>` : ``}
+      <div class="custom-panel">
+        <textarea class="q-textarea" id="custom-input" maxlength="${maxLen}"
+          placeholder="${escapeHtml(q.customPlaceholder || "想补充什么，写在这里…")}">${escapeHtml(answer.custom || "")}</textarea>
+        <div class="q-foot-row"><span class="q-counter" id="counter">${(answer.custom || "").length} / ${maxLen}</span></div>
+      </div>
+    </div>
+
+    <div class="skip-row">
+      <button class="skip-link" type="button" id="btn-skip">这题跳过，直接下一题 →</button>
+    </div>
+  `;
+
+  quizBody.innerHTML = html;
+
+  // 绑定：选项
+  if (hasOptions) {
+    [...document.querySelectorAll(".option")].forEach((el) => {
+      el.addEventListener("click", () => onToggleOption(q, el));
+    });
+    syncOptionUI(q);
+
+    const block = $("custom-block");
+    $("custom-toggle").addEventListener("click", () => {
+      const open = block.classList.toggle("is-open");
+      if (open) setTimeout(() => $("custom-input").focus(), 60);
+      syncToggleText(q);
+    });
+  }
+
+  // 绑定：自定义输入
+  const input = $("custom-input");
+  const counter = $("counter");
+  input.addEventListener("input", () => {
+    const len = input.value.length;
+    getAnswer(q.id).custom = input.value;
+    counter.textContent = `${len} / ${maxLen}`;
+    counter.classList.toggle("is-warn", len >= maxLen * 0.9);
+    syncToggleText(q);
+    saveDraft();
+  });
+
+  // 绑定：跳过
+  $("btn-skip").addEventListener("click", () => {
+    state.index === total - 1 ? submit() : goNext();
+  });
+
+  // 底部按钮
+  btnPrev.disabled = state.index === 0;
+  btnNext.textContent = state.index === total - 1 ? "提交回答" : "下一题";
+  syncToggleText(q);
+}
+
+/* 收起状态下，如果已经写了内容，提示改成「已写 x 字」 */
+function syncToggleText(q) {
+  const el = $("custom-toggle-text");
+  if (!el) return;
+  const custom = (getAnswer(q.id).custom || "").trim();
+  el.textContent = custom ? `已自己写了 ${custom.length} 字（点击编辑）` : "自己写一个答案";
+}
+
+function onToggleOption(q, el) {
+  const key = el.dataset.key;
+  const a = getAnswer(q.id);
+  const idx = a.keys.indexOf(key);
+
+  if (idx >= 0) {
+    a.keys.splice(idx, 1);
+  } else {
+    if (q.maxSelect > 0 && a.keys.length >= q.maxSelect) {
+      toast(`最多选 ${q.maxSelect} 项`);
+      return;
+    }
+    a.keys.push(key);
+  }
+
+  syncOptionUI(q);
+  saveDraft();
+}
+
+function syncOptionUI(q) {
+  const a = getAnswer(q.id);
+  const atLimit = q.maxSelect > 0 && a.keys.length >= q.maxSelect;
+
+  [...document.querySelectorAll(".option")].forEach((el) => {
+    const selected = a.keys.includes(el.dataset.key);
+    el.classList.toggle("is-selected", selected);
+    el.classList.toggle("is-disabled", atLimit && !selected);
+  });
+}
+
+/* =====================================================================
+ * 6. 流程
+ * ===================================================================== */
+
+function goNext() {
+  if (state.index === QUESTIONS.length - 1) { submit(); return; }
+  state.index += 1;
+  saveDraft();
+  renderQuestion();
+}
+
+function goPrev() {
+  if (state.index === 0) return;
+  state.index -= 1;
+  saveDraft();
+  renderQuestion();
+}
+
+function submit() {
+  // 提交下限：防止交上一份完全空白的问卷
+  const need = CONFIG.minRequiredAnswers || 0;
+  if (need > 0 && answeredCount() < need) {
+    toast(`至少回答 ${need} 道题吧，随便选一个也行`);
+    return;
+  }
+
+  btnNext.disabled = true;
+  btnNext.textContent = "提交中…";
+
+  // 原型：模拟网络请求
+  setTimeout(() => {
+    state.submitted = true;
+    const answered = answeredCount();
+    clearDraft();
+    console.log("[原型] 提交的答案（统一结构）：", JSON.parse(JSON.stringify(state.answers)));
+    $("answered-tip").textContent = `你这次回答了 ${answered} / ${QUESTIONS.length} 题`;
+    btnNext.disabled = false;
+    showScreen("done");
+  }, 650);
+}
+
+function startQuiz() {
+  const draft = loadDraft();
+  if (draft && draft.answers && Object.keys(draft.answers).length) {
+    state.answers = draft.answers;
+    state.index = Math.min(Math.max(draft.index || 0, 0), QUESTIONS.length - 1);
+    renderQuestion();
+    showScreen("quiz");
+    toast("已恢复上次的作答进度");
+    return;
+  }
+  state.index = 0;
+  state.answers = {};
+  renderQuestion();
+  showScreen("quiz");
+}
+
+/* 按题量估算耗时：有选项的题约 8 秒/道，纯自由题约 20 秒/道（粗估） */
+function estimateTime() {
+  const secs = QUESTIONS.reduce((s, q) => s + ((q.options && q.options.length) ? 8 : 20), 0);
+  const min = Math.max(1, Math.round(secs / 60));
+  return { text: `${min}–${min + 1} 分钟`, short: `${min}–${min + 1}` };
+}
+
+/* =====================================================================
+ * 7. 初始化
+ * ===================================================================== */
+
+function init() {
+  const t = estimateTime();
+  $("intro-name").textContent = CONFIG.creatorName;
+  $("done-name").textContent = CONFIG.creatorName;
+  $("intro-count").textContent = QUESTIONS.length;
+  $("meta-count").textContent = QUESTIONS.length;
+  $("intro-time").textContent = t.text;
+  $("meta-time").textContent = t.short;
+  $("avatar").textContent = CONFIG.creatorName.slice(0, 1);
+
+  $("btn-start").addEventListener("click", startQuiz);
+  btnPrev.addEventListener("click", goPrev);
+  btnNext.addEventListener("click", goNext);
+  $("btn-create").addEventListener("click", () => toast("原型演示：这里会跳转到创建页"));
+  $("btn-restart").addEventListener("click", () => {
+    state.index = 0;
+    state.answers = {};
+    state.submitted = false;
+    clearDraft();
+    showScreen("intro");
+  });
+
+  // 键盘：桌面端调试用
+  document.addEventListener("keydown", (e) => {
+    if (!screens.quiz.classList.contains("is-active")) return;
+    const typing = document.activeElement && document.activeElement.tagName === "TEXTAREA";
+    if (e.key === "ArrowLeft" && !typing) goPrev();
+    if (e.key === "ArrowRight" && !typing) goNext();
+    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) goNext();
+  });
+}
+
+init();
+</script>
+</body>
+</html>
