@@ -10,21 +10,22 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 链路自检接口（第一个垂直切片的前半段）。
+ * 健康检查接口（M1 / T-10）。
  *
  * <p>它只验证一件事：HTTP 请求能打到 Spring 容器并正确返回 JSON。
  * 不碰数据库 —— 所以它通了，说明「项目能启动 + Web 层正常 + Jackson 序列化正常」，
  * 与你后面要写的业务代码无关。
  *
- * <p>验证方式：浏览器或 curl 访问 http://localhost:8080/api/ping
+ * <p>验证方式：浏览器或 curl 访问 http://localhost:8080/api/health
  */
 @RestController
 @RequestMapping("/api")
-public class PingController {
+public class HealthController {
 
-    @GetMapping("/ping")
-    public ApiResponse<Map<String, Object>> ping() {
+    @GetMapping("/health")
+    public ApiResponse<Map<String, Object>> health() {
         Map<String, Object> data = new LinkedHashMap<>();
+        data.put("status", "up");
         data.put("service", "impression");
         data.put("javaVersion", System.getProperty("java.version"));
         data.put("time", LocalDateTime.now().toString());

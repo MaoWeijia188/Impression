@@ -104,7 +104,7 @@ GET /api/public/questionnaires/{shareCode}
   "title": "维嘉的印象问答",
   "description": "花 1 分钟，告诉我你眼中的我是什么样的人",
   "status": 1,
-  "questionCount": 9,
+  "questionCount": 11,
   "estimatedSeconds": 60
 }
 ```
@@ -246,7 +246,7 @@ POST /api/manage/questionnaires
 |---|---|---|
 | `title` | 是 | ≤ 30 字 |
 | `description` | 否 | ≤ 100 字 |
-| `preset` | 否 | 第一版固定用预置题库 `default`（9 题）；服务端据此复制题目与选项 |
+| `preset` | 否 | 第一版固定用预置题库 `default`（11 题）；服务端据此复制题目与选项 |
 
 **若请求头已带合法 `X-Owner-Token`**，新问卷复用该 token；否则服务端生成一个新的。
 

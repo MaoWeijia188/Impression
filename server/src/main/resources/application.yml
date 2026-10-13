@@ -12,6 +12,11 @@ server:
       force: true
 
 spring:
+  # 本地开发默认激活 local profile：数据库密码写在 application-local.yml，
+  # 该文件已被 .gitignore 排除，不会进版本库。换机器 / 改密码只需动那一个文件。
+  profiles:
+    active: local
+
   application:
     name: impression
 

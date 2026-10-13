@@ -85,7 +85,7 @@
 | 数据库 | MySQL 8.4 | 🚧 建表脚本已完成（`sql/`），待执行 |
 | 版本管理 | Git + GitHub | ✅ 已接入 |
 
-> 后端骨架已验证：`mvnw clean compile` 通过，`spring-boot:run` 后 `GET /api/ping` 返回 200。
+> 后端骨架已验证：`mvnw clean compile` 通过，`spring-boot:run` 后 `GET /api/health` 返回 200。
 
 ---
 
